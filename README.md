@@ -52,10 +52,10 @@ dotnet --version
 
 ```bash
 # Clone o repositório
-git clone https://github.com/eueliseeu/sistema-inscricao-cursos-blazor.git
+git clone https://github.com/eueliseeu/SistemaInscricaoCursosBlazor.git
 
 # Acesse a pasta do projeto
-cd sistema-inscricao-cursos-blazor
+cd SistemaInscricaoCursosBlazor
 
 # Execute com hot reload
 dotnet watch run
