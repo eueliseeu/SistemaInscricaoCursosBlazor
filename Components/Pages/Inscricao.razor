@@ -1,0 +1,127 @@
+@page "/inscricao"
+@rendermode InteractiveServer
+
+<PageTitle>Inscricao</PageTitle>
+
+<div class="inscription-page">
+    <div class="inscription-card">
+        <section class="form-panel">
+            <div class="form-heading">
+                <span class="step">Inscricao</span>
+                <h1>Garanta sua vaga</h1>
+                <p>Preencha seus dados para participar do curso escolhido.</p>
+            </div>
+
+            <EditForm Model="Modelo"
+                      FormName="InscricaoForm"
+                      OnValidSubmit="EnviarAsync">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="validation-summary" />
+
+                <div class="field">
+                    <label for="nome">Nome completo</label>
+                    <InputText id="nome"
+                               class="form-control"
+                               placeholder="Digite seu nome"
+                               @bind-Value="Modelo.Nome" />
+                    <ValidationMessage For="@(() => Modelo.Nome)" />
+                </div>
+
+                <div class="field">
+                    <label for="email">E-mail</label>
+                    <InputText id="email"
+                               type="email"
+                               class="form-control"
+                               placeholder="voce@exemplo.com"
+                               @bind-Value="Modelo.Email" />
+                    <ValidationMessage For="@(() => Modelo.Email)" />
+                </div>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label for="idade">Idade</label>
+                        <InputNumber id="idade"
+                                     class="form-control"
+                                     placeholder="Ex.: 18"
+                                     @bind-Value="Modelo.Idade" />
+                        <ValidationMessage For="@(() => Modelo.Idade)" />
+                    </div>
+
+                    <div class="field">
+                        <label for="curso">Curso</label>
+                        <InputSelect id="curso"
+                                     class="form-select"
+                                     @bind-Value="Modelo.CursoId">
+                            <option value="">Selecione um curso</option>
+                            <option value="1">Desenvolvimento Web</option>
+                            <option value="2">Mobile</option>
+                            <option value="3">Desenvolvimento de Jogos</option>
+                            <option value="4">Usabilidade</option>
+                        </InputSelect>
+                        <ValidationMessage For="@(() => Modelo.CursoId)" />
+                    </div>
+                </div>
+
+                <button type="submit"
+                        class="submit-button"
+                        disabled="@Enviando">
+                    @(Enviando ? "Processando..." : "Confirmar inscricao")
+                </button>
+            </EditForm>
+
+        </section>
+    </div>
+
+    @if (Sucesso)
+    {
+        <div class="success-toast" role="status" aria-live="polite">
+            <span class="toast-icon" aria-hidden="true">✓</span>
+            <div class="toast-content">
+                <strong>Inscricao confirmada!</strong>
+                <small>Em breve entraremos em contato com voce.</small>
+            </div>
+            <button type="button"
+                    class="toast-close"
+                    aria-label="Fechar notificacao"
+                    @onclick="FecharNotificacaoAsync">×</button>
+        </div>
+    }
+</div>
+
+@code {
+    [SupplyParameterFromForm(FormName = "InscricaoForm")]
+    public InscricaoModel Modelo { get; set; } = null!;
+
+    private bool Enviando { get; set; }
+
+    private bool Sucesso { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Modelo ??= new InscricaoModel();
+    }
+
+    private async Task EnviarAsync()
+    {
+        Sucesso = false;
+        Enviando = true;
+        await InvokeAsync(StateHasChanged);
+
+        await Task.Delay(2000);
+
+        Enviando = false;
+        Sucesso = true;
+        await InvokeAsync(StateHasChanged);
+
+        await Task.Delay(5000);
+
+        Sucesso = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private Task FecharNotificacaoAsync()
+    {
+        Sucesso = false;
+        return Task.CompletedTask;
+    }
+}
